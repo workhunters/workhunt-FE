@@ -28,6 +28,7 @@ const contentStyle = {
   textAlign: "center",
   minHeight: 120,
   lineHeight: "120px",
+  background: "white",
 };
 const siderStyle = {
   textAlign: "center",
@@ -87,16 +88,6 @@ const JobBoard = () => {
       companyname: "razorpay",
       url: "https://boards-api.greenhouse.io/v1/boards/razorpaysoftwareprivatelimited/jobs?content=true",
       jobs: RazorpayJobs,
-    },
-    {
-      companyname: "skit.ai",
-      url: "https://app.recruiterbox.com/widget/84388/openings/",
-      jobs: SkitAIJobs,
-    },
-    {
-      companyname: "Pharmeasy",
-      url: "https://pharmeasy.mynexthire.com/employer/careers/reqlist/get",
-      jobs: PharmeasyJobs,
     },
     {
       companyname: "Meesho",
