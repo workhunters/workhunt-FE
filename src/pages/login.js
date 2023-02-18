@@ -1,16 +1,16 @@
 
-import { Button, Checkbox, Form, Input, Typography } from 'antd';
+import { Button, Checkbox, Form, Input, Typography,message } from 'antd';
 import { useEffect } from 'react';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { login, updateUser } from '../redux/user/user';
 const { Title } = Typography;
-const onFinish = (values) => {
-    console.log('Success:', values);
-  };
-  const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
-  };
-const SignUp = ()=>{
+
+const Login = ()=>{
+
+    const s = useSelector(state=>state)
+    const dispatch = useDispatch();
+
     const isLoggedIn = useSelector(state=>state.user?.isLoggedIn)
 
     const navigate = useNavigate()
@@ -18,13 +18,24 @@ const SignUp = ()=>{
     useEffect(()=>{
         console.log(isLoggedIn)
         if(isLoggedIn === true){
-            navigate('/')
+            navigate('/home')
         }
     },[isLoggedIn])
-    const s = useSelector(state=>state)
     console.log(s)
+
+    const onFinish = (values) => {
+        console.log('Success:', values);
+
+        message.success('Welcome back');
+        dispatch(login(values))
+      };
+      const onFinishFailed = (errorInfo) => {
+        console.log('Failed:', errorInfo);
+      };
+
+
     return <div style={{margin: '50px auto', width: 720}}>
-        <div><Title>Workhunt - Sign up</Title>
+        <div><Title>Workhunt - Login</Title>
         </div>
          <Form
             name="basic"
@@ -36,13 +47,6 @@ const SignUp = ()=>{
             onFinishFailed={onFinishFailed}
             autoComplete="off"
         >
-            <Form.Item
-            label="Username"
-            name="username"
-            rules={[{ required: true, message: 'Please input your username!' }]}
-            >
-            <Input />
-            </Form.Item>
 
             <Form.Item
             label="Email"
@@ -69,4 +73,4 @@ const SignUp = ()=>{
   </Form>
     </div>
 }
-export default SignUp;
+export default Login;
