@@ -18,7 +18,6 @@ const SignUp = () => {
 
   const onFinish = async (values) => {
     console.log("Success:", values);
-    let response = await fetch("");
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -52,7 +51,11 @@ const SignUp = () => {
           name="email"
           rules={[{ required: true, message: "Please input your email!" }]}
         >
-          <Input />
+          <Input list="abcd">
+            <datalist id="abcd">
+              <option value={"SFDF"}></option>
+            </datalist>
+          </Input>
         </Form.Item>
 
         <Form.Item

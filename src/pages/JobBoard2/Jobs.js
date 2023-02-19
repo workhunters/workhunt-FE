@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, Divider, Skeleton, Typography } from "antd";
+import { useSelector, useDispatch } from "react-redux";
 import {
   EditOutlined,
   EllipsisOutlined,
@@ -7,6 +8,7 @@ import {
 } from "@ant-design/icons";
 import moment from "moment";
 import { Link } from "react-router-dom";
+import "./jobs.css";
 
 const { Title } = Typography;
 const TOP5 = [
@@ -85,30 +87,22 @@ const TOP5 = [
       "https://jobs.lever.co/cred/621767d5-6626-4d3f-a178-0ba1f538f2b0/apply",
   },
 ];
-let SortJobs = (allJobs, cb) => {
-  let all = [];
-  allJobs.sort((a, b) => {
-    return a.createdAt - b.createdAt;
-  });
-  for (let job of allJobs) {
-    console.log(job);
-    all.push(job);
-  }
-  allJobs = allJobs.reverse();
-  cb(allJobs);
-};
 const Jobs = ({ selected }) => {
   let [jobs, setJob] = useState([]);
+
+  const { allCompanies, jobsByCompanies } = useSelector((state) => state.jobs);
   useEffect(() => {
-    if (selected.companyname === "razorpay") {
-      console.log(selected.jobs.jobs);
-      setJob(selected.jobs.jobs);
-    } else if (selected.companyname === "pharmeasy") {
-      setJob([]);
-    } else {
-      SortJobs(selected.jobs, setJob);
-      setJob(selected.jobs);
-    }
+    console.log(selected);
+    setJob(jobsByCompanies[selected]);
+    // if (selected.companyname === "razorpay") {
+    //   console.log(selected.jobs.jobs);
+    //   setJob(selected.jobs.jobs);
+    // } else if (selected.companyname === "pharmeasy") {
+    //   setJob([]);
+    // } else {
+    //   SortJobs(selected.jobs, setJob);
+    //   setJob(selected.jobs);
+    // }
   }, [selected]);
   return (
     <div>
@@ -120,70 +114,11 @@ const Jobs = ({ selected }) => {
         </>
       ) : (
         <React.Fragment>
+          {selected} - {jobs?.length}
           <div>
             <Title level={1} style={{ textTransform: "capitalize" }}>
-              {selected?.companyname}
+              {selected?.name}
             </Title>
-          </div>
-          <Divider />
-          <div style={{ textAlign: "left", padding: "0 30px" }}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                width: "100%",
-              }}
-            >
-              <Title level={2}>Top Jobs Suggested</Title>{" "}
-              <Button
-                type="primary"
-                onClick={() => {
-                  TOP5.forEach((each) => {
-                    window.open(each.applyUrl);
-                  });
-                }}
-              >
-                Apply to All Suggested Jobs
-              </Button>{" "}
-            </div>
-            <div style={{ display: "flex", flexWrap: "wrap" }}>
-              {TOP5.map((TOP) => {
-                return (
-                  <Card
-                    className="jobscard"
-                    style={{
-                      width: 300,
-                      marginTop: 16,
-                      border: "1px solid #cfcfcf",
-                      textAlign: "left",
-                      margin: "10px",
-                    }}
-                    actions={[
-                      <a href={TOP.hostedUrl} target="_blank" rel="noreferrer">
-                        Open Job
-                      </a>,
-                      <a target="_blank" rel="noreferrer" href={TOP.applyUrl}>
-                        Apply Url
-                      </a>,
-                    ]}
-                  >
-                    {TOP.text}
-
-                    <br />
-                    <strong>{moment(TOP.createdAt).fromNow()}</strong>
-                    {/* <Skeleton loading={loading} avatar active>
-                    <Meta
-                      avatar={
-                        <Avatar src="https://joeschmoe.io/api/v1/random" />
-                      }
-                      title="Card title"
-                      description="This is the description"
-                    />
-                  </Skeleton> */}
-                  </Card>
-                );
-              })}
-            </div>
           </div>
           <Divider />
           <Title level={2}>All Other Job Roles available</Title>
@@ -191,7 +126,7 @@ const Jobs = ({ selected }) => {
             {selected.companyname !== "pharmeasy" &&
               selected.companyname !== "skit.ai" &&
               Array.isArray(jobs) &&
-              jobs?.slice(1, jobs.length).map((eachJob, eachIndex) => {
+              jobs?.map((eachJob, eachIndex) => {
                 return (
                   <div
                     style={{
@@ -210,43 +145,32 @@ const Jobs = ({ selected }) => {
                         textAlign: "left",
                       }}
                       actions={[
-                        <>
-                          <a
-                            target="_blank"
-                            rel="noreferrer"
-                            href={eachJob?.hostedUrl || eachJob?.absolute_url}
-                          >
-                            Open Job
-                          </a>
-                        </>,
+                        <>Open Job</>,
                         <a
                           target="_blank"
                           rel="noreferrer"
-                          href={eachJob?.applyUrl || eachJob?.absolute_url}
+                          href={
+                            eachJob?.applyUrl ||
+                            eachJob?.absolute_url ||
+                            eachJob?.applylink
+                          }
                         >
                           Apply Url
                         </a>,
                       ]}
                     >
+                      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPI9bry6KL7AggyYTx0KedDRZZ4qKbMy6Nm5kU&s=0" />
+                      <br />
                       {eachJob["text"] || eachJob["title"]}
 
                       <br />
                       <strong>
                         {moment(
-                          eachJob?.createdAt
-                            ? eachJob?.createdAt
-                            : new Date(eachJob.updated_at).getTime()
+                          eachJob?.dateposted
+                            ? Number(eachJob?.dateposted) * 1000
+                            : ""
                         ).fromNow()}
                       </strong>
-                      {/* <Skeleton loading={loading} avatar active>
-                    <Meta
-                      avatar={
-                        <Avatar src="https://joeschmoe.io/api/v1/random" />
-                      }
-                      title="Card title"
-                      description="This is the description"
-                    />
-                  </Skeleton> */}
                     </Card>
                   </div>
                 );

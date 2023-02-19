@@ -1,0 +1,8 @@
+.jobscard {
+  cursor: pointer;
+  transition-duration: 200ms;
+}
+
+.jobscard:hover {
+  box-shadow: 0 0 5px #dedede;
+}

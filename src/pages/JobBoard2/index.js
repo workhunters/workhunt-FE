@@ -1,13 +1,11 @@
 import { Dropdown, Layout, Menu, Space, message, Typography } from "antd";
 import { useEffect, useState } from "react";
-import Jobs from "./Jobs";
 
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { UserOutlined } from "@ant-design/icons";
 import { logout } from "../../redux/user/user";
-import DashboardHeader from "./DashboardHeader";
-
+import Jobs from "./Jobs";
 import CredJobs from "./../../samples/cred.json";
 import CoupaJobs from "./../../samples/coupa.json";
 import EventBriteJobs from "./../../samples/EventBrite.json";
@@ -20,7 +18,7 @@ import RazorpayJobs from "./../../samples/razorpay.json";
 import SambatvJobs from "./../../samples/sambatv.json";
 import SkitAIJobs from "./../../samples/skit.ai.json";
 import TalendJobs from "./../../samples/Talend.json";
-import "./jobs.css";
+import DashboardHeader from "../JobBoard/DashboardHeader";
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -67,7 +65,7 @@ const items = [
   getItem("Navigation One", "sub1", ""),
 ];
 
-const JobBoard = () => {
+const JobBoard2 = () => {
   let [cState, setcState] = useState([]);
   let [selected, setSelected] = useState({
     companyname: null,
@@ -76,76 +74,30 @@ const JobBoard = () => {
   });
 
   const isLoggedIn = useSelector((state) => state.user?.isLoggedIn);
+  const { allCompanies, jobsByCompanies } = useSelector((state) => state.jobs);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  let Companies = [
-    {
-      companyname: "cred",
-      url: "https://api.lever.co/v0/postings/cred?mode=json",
-      jobs: CredJobs,
-    },
-    {
-      companyname: "razorpay",
-      url: "https://boards-api.greenhouse.io/v1/boards/razorpaysoftwareprivatelimited/jobs?content=true",
-      jobs: RazorpayJobs,
-    },
-    {
-      companyname: "Meesho",
-      url: "https://api.lever.co/v0/postings/meesho/",
-      jobs: MeeshoJobs,
-    },
-    {
-      companyname: "Netflix",
-      url: "https://api.lever.co/v0/postings/netflix?mode=json",
-      jobs: NetflixJobs,
-    },
-    {
-      companyname: "EventBrite",
-      url: "https://api.lever.co/v0/postings/eventbrite?mode=json",
-      jobs: EventBriteJobs,
-    },
-    {
-      companyname: "Talend",
-      url: "https://api.lever.co/v0/postings/talend?mode=json",
-      jobs: TalendJobs,
-    },
-    {
-      companyname: "hingehealth",
-      url: "https://api.lever.co/v0/postings/hingehealth?mode=json",
-      jobs: HingeHealthJobs,
-    },
-    {
-      companyname: "parallelwireless",
-      url: "https://api.lever.co/v0/postings/parallelwireless?mode=json",
-      jobs: ParallelWirelessJobs,
-    },
-    {
-      companyname: "coupa",
-      url: "https://api.lever.co/v0/postings/coupa?mode=json",
-      jobs: CoupaJobs,
-    },
-    {
-      companyname: "sambatv",
-      url: "https://api.lever.co/v0/postings/sambatv?mode=json",
-      jobs: SambatvJobs,
-    },
-  ];
   useEffect(() => {
-    console.log(isLoggedIn);
     if (isLoggedIn === false) {
       navigate("/login");
     }
   }, [isLoggedIn]);
   useEffect(() => {
-    let itemslist = [];
-    Companies.forEach((eachCompany, eachIndex) => {
-      itemslist.push(getItem(eachCompany.companyname, eachIndex, ""));
-      if (eachIndex === Companies.length - 1) {
-        setcState(itemslist);
-      }
+    let keys = Object.keys(jobsByCompanies);
+    console.log(keys);
+    let x = [...keys].map((each, ei) => {
+      return getItem(each, ei, "", "", "");
     });
+    setcState(x);
+  }, [jobsByCompanies]);
+  useEffect(() => {
+    // setcState()
+    setcState(allCompanies);
   }, []);
+  useEffect(() => {
+    console.log(selected);
+  }, [selected]);
   return (
     <div>
       <DashboardHeader />
@@ -153,20 +105,21 @@ const JobBoard = () => {
         <Sider style={siderStyle}>
           <Menu
             onClick={(item) => {
-              setSelected(Companies[item.key]);
+              let keys = Object.keys(jobsByCompanies);
+
+              setSelected(keys[item.key]);
             }}
-            style={{
-              height: "100%",
-            }}
+            style={{}}
             mode="inline"
             items={cState}
           />
         </Sider>
         <Content style={contentStyle}>
+          {selected.name}
           <Jobs selected={selected} />
         </Content>
       </Layout>
     </div>
   );
 };
-export default JobBoard;
+export default JobBoard2;
